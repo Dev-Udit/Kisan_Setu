@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Kisan Setu | Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f1f5f9; color: #1e293b; }
+        .sidebar-brand { background: #0f172a; color: #f8fafc; padding: 1.5rem; font-weight: bold; }
+        .stat-card { border: none; border-radius: 10px; border-left: 5px solid #3b82f6; transition: 0.3s; }
+        .stat-card:hover { transform: scale(1.02); }
+        .table-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .nav-pills .nav-link.active { background-color: #0f172a; }
+        .badge-dispatch { background-color: #10b981; color: white; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-dark shadow-sm" style="background: #0f172a;">
+    <div class="container-fluid">
+        <span class="navbar-brand">🌾 Kisan Setu | Admin Panel</span>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn btn-outline-light btn-sm">Logout</button>
+        </form>
+    </div>
+</nav>
+
+<div class="container py-5">
+    <div class="row mb-5 text-center">
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card stat-card p-3 shadow-sm border-0">
+                <h6 class="text-muted">Pending Sales</h6>
+                <h2 class="fw-bold text-primary" th:text="${pendingSales.size()}">0</h2>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card stat-card p-3 shadow-sm border-0" style="border-left-color: #10b981;">
+                <h6 class="text-muted">Fertilizer Requests</h6>
+                <h2 class="fw-bold text-success" th:text="${pendingFertilizer.size()}">0</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container mb-5">
+        <h4 class="mb-4 fw-bold text-success">🧪 Pending Fertilizer Logistics</h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Farmer</th>
+                    <th>Required Quantity</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="req : ${pendingFertilizer}">
+                    <td>
+                        <a th:href="@{/admin/farmer-profile/{id}(id=${req.farmer?.id})}"
+                           class="text-decoration-none fw-bold text-success"
+                           th:text="${req.farmer?.name ?: 'Unknown Farmer'}">Farmer Name</a>
+                    </td>
+                    <td>
+                        <span class="badge bg-light text-dark border">
+                           <span th:text="${req.ureaQty}">0</span>kg Urea &
+                           <span th:text="${req.dapQty}">0</span>kg DAP
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <form th:action="@{/admin/approve-fertilizer/{id}(id=${req.id})}" method="post">
+                            <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm">Dispatch 🚛</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pendingFertilizer)}">
+                    <td colspan="3" class="text-center text-muted py-4">No pending fertilizer orders.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="table-container mb-5">
+        <h4 class="mb-4 fw-bold">⚡ Active Pending Crop Sales</h4>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Farmer</th>
+                    <th>Crop</th>
+                    <th>Area</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sale : ${pendingSales}">
+                    <td>
+                        <a th:href="@{/admin/farmer-profile/{id}(id=${sale.farmer?.id})}"
+                           class="text-decoration-none fw-bold text-primary"
+                           th:text="${sale.farmer?.name ?: 'Unknown Farmer'}">Tejas</a>
+                    </td>
+                    <td><span class="badge bg-info text-dark" th:text="${sale.cropName}">Rice</span></td>
+                    <td th:text="${sale.area + ' Acres'}">10.0</td>
+                    <td class="text-center">
+                        <form th:action="@{/admin/approve-sale/{id}(id=${sale.id})}" method="post">
+                            <button class="btn btn-success btn-sm px-4 shadow-sm">Approve ✅</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(pendingSales)}">
+                    <td colspan="4" class="text-center text-muted py-4">No pending crop approvals.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius: 12px;">
+        <div class="card-header bg-white py-3 border-0">
+            <h5 class="mb-0 fw-bold text-secondary">📜 Transaction History (All Records)</h5>
+        </div>
+        <div class="card-body">
+            <ul class="nav nav-pills mb-3" id="historyTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="sold-tab" data-bs-toggle="tab" data-bs-target="#sold-content" type="button">Sold Crops</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="dispatch-tab" data-bs-toggle="tab" data-bs-target="#dispatch-content" type="button">Fertilizer Dispatch</button>
+                </li>
+            </ul>
+
+            <div class="tab-content border p-3 rounded bg-light">
+                <div class="tab-pane fade show active" id="sold-content" role="tabpanel">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr><th>Farmer</th><th>Crop</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="history : ${soldHistory}">
+                            <td th:text="${history.farmer?.name}">Farmer</td>
+                            <td th:text="${history.cropName}">Rice</td>
+                            <td>
+                                <span class="badge bg-dark" th:text="${history.tokenNumber}">TKN-001</span>
+                            </td>
+                            <td><span class="badge bg-secondary">SOLD</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tab-pane fade" id="dispatch-content" role="tabpanel">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr><th>Farmer</th><th>Quantity</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="fHistory : ${fertilizerHistory}">
+                            <td th:text="${fHistory.farmer?.name}">Farmer</td>
+                            <td th:text="${fHistory.ureaQty + 'kg Urea / ' + fHistory.dapQty + 'kg DAP'}">Quantity</td>
+                            <td><span class="badge badge-dispatch">DISPATCHED</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

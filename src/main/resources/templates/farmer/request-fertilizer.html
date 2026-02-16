@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Fertilizer | Kisan Setu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .table-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .badge-requested { background-color: #d1fae5; color: #065f46; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="table-container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-success fw-bold mb-0">🧪 Fertilizer Request (Urea / DAP)</h4>
+            <a href="/farmer/dashboard" class="btn btn-outline-secondary btn-sm">⬅ Back to Dashboard</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Crop Name</th>
+                    <th>Area (Acres)</th>
+                    <th>Estimated Requirement</th>
+                    <th class="text-center">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="crop : ${crops}">
+                    <td th:text="${crop.cropName}">Rice</td>
+                    <td th:text="${crop.area + ' Acres'}">10.0 Acres</td>
+                    <td>
+                        Urea: <span th:text="${crop.ureaRequired}">500.0</span> kg<br>
+                        DAP: <span th:text="${crop.dapRequired}">250.0</span> kg
+                    </td>
+                    <td class="text-center">
+                        <div th:if="${!crop.fertilizerRequested}">
+                            <form th:action="@{/farmer/request-fertilizer}" method="post">
+                                <input type="hidden" name="cropId" th:value="${crop.id}">
+                                <input type="hidden" name="ureaQty" th:value="${crop.ureaRequired}">
+                                <input type="hidden" name="dapQty" th:value="${crop.dapRequired}">
+
+                                <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm">
+                                    Request Now 🚀
+                                </button>
+                            </form>
+                        </div>
+
+                        <div th:if="${crop.fertilizerRequested}">
+                            <span class="badge bg-success p-2">✅ Request Submitted</span>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(crops)}">
+                    <td colspan="4" class="text-center py-4 text-muted">No crops found to request fertilizer for.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

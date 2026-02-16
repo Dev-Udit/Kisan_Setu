@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Kisan Setu | Admin Access</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Segoe UI', sans-serif; }
+        .admin-card { background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; padding: 2.5rem; }
+        .btn-admin { background: #0f172a; color: white; border: none; transition: 0.3s; }
+        .btn-admin:hover { background: #334155; color: white; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+<div class="admin-card text-center">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark">Admin Portal</h2>
+        <p class="text-muted small">Mandi Intelligence & Logistics</p>
+    </div>
+    <div th:if="${param.error}" class="alert alert-danger text-center py-2 small mb-3">
+        Wrong Username or Password
+    </div>
+    <form th:action="@{/login}" method="post">
+        <div class="mb-3">
+            <input type="text" name="username" class="form-control form-control-lg" placeholder="Admin Mobile" required>
+        </div>
+        <div class="mb-4">
+            <input type="password" name="password" class="form-control form-control-lg" placeholder="Secret Key" required>
+        </div>
+        <button type="submit" class="btn btn-admin btn-lg w-100 shadow-sm">Secure Sign In</button>
+    </form>
+    <div class="mt-4 border-top pt-3">
+        <a href="/" class="text-decoration-none text-muted small">← Back to Public Site</a>
+    </div>
+</div>
+</body>
+</html>

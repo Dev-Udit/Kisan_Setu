@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard | Kisan Setu</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Your existing styles */
+        .action-card { transition: 0.3s; border: none; }
+        .action-card:hover { transform: translateY(-5px); }
+        .token-badge { border-left: 4px solid #198754; }
+
+        /* ✅ ADD THE PRINT STYLE HERE */
+        @media print {
+            /* Hide everything else (Navbar, Logout, Quick Actions) */
+            body * { visibility: hidden; }
+
+            /* Show ONLY the token badge */
+            .token-badge, .token-badge * {
+                visibility: visible;
+            }
+
+            /* Position the receipt at the top of the page */
+            .token-badge {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: 2px solid #198754;
+                padding: 30px;
+                background-color: white !important;
+            }
+
+            /* Hide the "Print" button itself on the paper/PDF */
+            .btn-outline-success, .btn-sm { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-end mb-2">
+        <a th:href="@{/farmer/dashboard(lang=en)}" class="btn btn-sm btn-outline-secondary me-2">English</a>
+        <a th:href="@{/farmer/dashboard(lang=hi)}" class="btn btn-sm btn-outline-success">हिंदी</a>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-success fw-bold">
+            <span th:text="#{dash.welcome}">Welcome</span>,
+            <span th:text="${farmer.name}">Farmer</span>!
+        </h2>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-danger btn-sm shadow-sm">Logout 🚪</button>
+        </form>
+    </div>
+
+    <div class="card p-3 mb-4 border-0 shadow-sm">
+        <div class="row text-center">
+            <div class="col-md-6 border-end">
+                <p class="text-muted mb-0" th:text="#{dash.village}">Village</p>
+                <h5 class="fw-bold" th:text="${farmer.village}">Village Name</h5>
+            </div>
+            <div class="col-md-6">
+                <p class="text-muted mb-0" th:text="#{dash.land}">Total Land Area</p>
+                <h5 class="fw-bold" th:text="${farmer.landArea + ' Acres'}">0 Acres</h5>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4 border-0">
+        <div class="card-header bg-success text-white py-3">
+            <h4 class="mb-0">👨‍🌾 Quick Actions</h4>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <a href="/farmer/add-crop" class="btn btn-outline-success w-100 py-3 action-card bg-white shadow-sm" th:text="'🌱 ' + #{dash.add}">Add New Crop</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/farmer/sell-crop" class="btn btn-outline-success w-100 py-3 action-card bg-white shadow-sm" th:text="'💰 ' + #{dash.sell}">Sell Harvest</a>
+                </div>
+                <div class="col-md-4">
+                    <a href="/farmer/fertilizer" class="btn btn-outline-success w-100 py-3 action-card bg-white shadow-sm">🧪 Fertilizer Request</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white py-3">
+            <h4 class="mb-0">📜 My Active Sale Requests</h4>
+        </div>
+        <div class="card-body p-0">
+            <td class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Crop Details</th>
+                        <th>Delivery Mode</th>
+                        <th class="text-center">Token / Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="crop : ${crops}">
+                        <td class="ps-4">
+                            <div class="fw-bold text-dark" th:text="${crop.cropName}">Rice</div>
+                            <small class="text-muted" th:text="${crop.area + ' Acres'}">10.0 Acres</small>
+                        </td>
+                        <td>
+                            <span class="badge bg-info text-dark" th:text="${crop.deliveryMode ?: 'Not Selected'}">Mandi Slot</span>
+                        </td>
+                        <td class="text-center">
+                            <div th:if="${crop.sellStatus == 'SOLD'}" class="alert alert-success py-2 px-3 mb-0 d-inline-block token-badge text-start">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <strong class="d-block text-success">✅ Token: <span th:text="${crop.tokenNumber}">TKN-1234</span></strong>
+                                        <small class="text-dark d-block fw-bold" th:text="${crop.slotDetails}">Gate 2</small>
+                                    </div>
+                                    <button class="btn btn-sm btn-outline-success ms-3" onclick="window.print()">Print 🖨️</button>
+                                </div>
+                            </div>
+
+                            <div th:if="${crop.sellStatus == 'PENDING_APPROVAL'}" class="text-warning fw-bold">
+                                ⌛ Processing...
+                            </div>
+
+                            <span th:if="${crop.sellStatus == 'NOT_SOLD'}" class="text-muted small">No active request</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-primary text-white py-3">
+            <h4 class="mb-0" th:text="#{fert.title}">Fertilizer Requests</h4>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                <tr>
+                    <th th:text="#{fert.type}">Type</th>
+                    <th class="text-center" th:text="#{fert.status}">Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="f : ${fertilizerRequests}">
+                    <td>
+                        <span th:text="'Urea: ' + ${f.ureaQty} + ' kg'"></span> |
+                        <span th:text="'DAP: ' + ${f.dapQty} + ' kg'"></span>
+                    </td>
+                    <td class="text-center">
+                        <span th:if="${f.status == 'DISPATCHED'}" class="badge bg-success" th:text="#{fert.dispatched}">Dispatched</span>
+                        <span th:if="${f.status == 'PENDING_APPROVAL'}" class="text-warning fw-bold" th:text="#{fert.pending}">Processing...</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

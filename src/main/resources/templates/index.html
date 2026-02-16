@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kisan Setu - Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .hero { background: linear-gradient(135deg, #28a745, #1e7e34); color: white; padding: 60px 0; border-radius: 0 0 20px 20px; }
+        .card { border-radius: 15px; border: none; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+<div class="hero text-center mb-5">
+    <h1>🌾 Kisan Setu (किसान सेतु)</h1>
+    <p class="lead">बीज से बाज़ार तक, किसान के विकास का सेतु</p>
+</div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm h-100 p-3">
+                <div class="card-body text-center">
+                    <h2 class="card-title text-success">Farmers</h2>
+                    <p class="card-text text-muted">Manage crops, sell harvest, and request Urea/DAP.</p>
+                    <div class="d-grid gap-2">
+                        <a href="/login" class="btn btn-success py-2">Farmer Login</a>
+                        <a href="/register" class="btn btn-outline-success py-2">New Registration</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm h-100 p-3">
+                <div class="card-body text-center">
+                    <h2 class="card-title text-dark">Administrators</h2>
+                    <p class="card-text text-muted">Review mandi intelligence and approve urea requests.</p>
+                    <div class="d-grid mt-4">
+                        <a href="/admin/login" class="btn btn-dark py-2">Admin Panel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

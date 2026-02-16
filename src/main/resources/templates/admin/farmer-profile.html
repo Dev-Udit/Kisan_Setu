@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f1f5f9; }
+        .profile-header { background: #0f172a; color: white; padding: 2rem 0; }
+    </style>
+</head>
+<body>
+<div class="profile-header mb-4">
+    <div class="container">
+        <a href="/admin/dashboard" class="btn btn-outline-light btn-sm mb-3">← Back to Dashboard</a>
+        <h1 th:text="${farmer.name}">Farmer Name</h1>
+        <p class="mb-0" th:text="${'📍 ' + farmer.village}"></p>
+    </div>
+</div>
+
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body">
+                    <h5 class="fw-bold">Contact Details</h5>
+                    <p class="mb-1 text-muted">Mobile Number</p>
+                    <p class="fw-bold" th:text="${farmer.mobile}"></p>
+                    <p class="mb-1 text-muted">Total Land Area</p>
+                    <p class="fw-bold" th:text="${farmer.landArea + ' Acres'}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0 fw-bold">Recent Activities</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Registered Crops</h6>
+                    <table class="table table-sm mb-4">
+                        <thead><tr><th>Crop</th><th>Area</th><th>Status</th></tr></thead>
+                        <tr th:each="c : ${crops}">
+                            <td th:text="${c.cropName}"></td>
+                            <td th:text="${c.area}"></td>
+                            <td><span class="badge bg-secondary" th:text="${c.sellStatus}"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
