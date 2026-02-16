@@ -24,6 +24,22 @@ Kisan Setu is a comprehensive agricultural distribution and slot management syst
 
 ---
 
+## 🖼️ Screenshots
+
+### Home Page
+![Home](screenshots/home.png)
+
+### Farmer Dashboard
+![Farmer Dashboard](screenshots/farmer-dashboard.png)
+
+### Sell Crop Page
+![Sell Crop](screenshots/sell-crop.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+
+---
+
 ## 🛠️ Tech Stack
 
 - **Backend:** Java, Spring Boot, Spring Security, Spring Data JPA
