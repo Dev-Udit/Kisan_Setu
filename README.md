@@ -92,10 +92,6 @@ spring.jpa.hibernate.ddl-auto=update
 
 ---
 
-## 🌐 Access the Application
-
-- Home Page: http://localhost:8080/
-
 ## 📂 Project Structure
 
 ```
